@@ -41,6 +41,8 @@ public class Main {
 		// one thread added 10000 items and another thread removed them
 		// lets move join after dt.start so both threads start at the same time;
 		// now we have unexpected result, we have different results everytime
+		// now that we add the synchronized keyword on the increment, decrement and getItems methods
+		// the correct output is seen
 		System.out.println("We currently have " + ic.getItems() + " items");
 	}
 
@@ -61,7 +63,7 @@ public class Main {
 
 	public static class DecrementingThread extends Thread {
 		private InventoryCounter inventoryCounter;
-
+		
 		public DecrementingThread(InventoryCounter inventoryCounter) {
 			this.inventoryCounter = inventoryCounter;
 		}
@@ -76,17 +78,35 @@ public class Main {
 
 	private static class InventoryCounter {
 		private int items = 0;
-
-		public void increment() {
-			items++;
+		//Synchronize - Lock
+		Object lock = new Object();
+		public  void increment() {
+			synchronized(this.lock) {
+				items++;
+			}
 		}
-
+		//Synchronize - Monitor
+		//public synchronized void decrement() {
+		//	items--;
+		//}
+		
+		//Synchronize - Lock
 		public void decrement() {
-			items--;
+			synchronized(this.lock) {
+				items--;
+			}
 		}
-
+		
+		//Synchronize - Monitor
+		//public synchronized int getItems() {
+		//	return items;
+		//}
+		
+		//Synchronize - Lock
 		public int getItems() {
-			return items;
+			synchronized(this.lock) {
+				return items;
+			}
 		}
 	}
 }
